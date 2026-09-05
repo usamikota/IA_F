@@ -1,0 +1,791 @@
+<title>見えない付加価値診断</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+<style>
+:root{
+  --bg:#F2F5F3;--surface:#FFFFFF;--surface-2:#E5EAE7;--surface-3:#F8FAF9;
+  --ink:#0E1614;--ink-2:#3F4C48;--ink-3:#6E7A76;
+  --rule:#CFD8D4;--rule-strong:#A9B5B0;
+  --accent:#0F5B56;--accent-2:#17827A;--accent-wash:#DFEEEB;
+  --signal:#9C3823;--signal-wash:#F7E6E1;
+  --shadow:0 1px 2px rgba(14,22,20,.05),0 12px 32px -22px rgba(14,22,20,.35);
+  --shadow-lg:0 2px 6px rgba(14,22,20,.07),0 30px 60px -34px rgba(14,22,20,.45);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1211;--surface:#161D1B;--surface-2:#222A28;--surface-3:#121917;
+    --ink:#EEF3F1;--ink-2:#AAB5B1;--ink-3:#7D8884;
+    --rule:#2A3330;--rule-strong:#3D4844;
+    --accent:#6BC9BF;--accent-2:#8FDCD3;--accent-wash:#122622;
+    --signal:#E89078;--signal-wash:#2C1D18;
+    --shadow:0 1px 2px rgba(0,0,0,.5),0 12px 32px -22px rgba(0,0,0,.85);
+    --shadow-lg:0 2px 6px rgba(0,0,0,.55),0 30px 60px -34px rgba(0,0,0,.95);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1211;--surface:#161D1B;--surface-2:#222A28;--surface-3:#121917;
+  --ink:#EEF3F1;--ink-2:#AAB5B1;--ink-3:#7D8884;
+  --rule:#2A3330;--rule-strong:#3D4844;
+  --accent:#6BC9BF;--accent-2:#8FDCD3;--accent-wash:#122622;
+  --signal:#E89078;--signal-wash:#2C1D18;
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 12px 32px -22px rgba(0,0,0,.85);
+  --shadow-lg:0 2px 6px rgba(0,0,0,.55),0 30px 60px -34px rgba(0,0,0,.95);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);
+  font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN",system-ui,sans-serif;
+  font-size:17px;line-height:1.8;margin:0;padding:0 22px 90px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:840px;margin:0 auto}
+p{margin:0}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- header ---------- */
+header.top{padding:40px 0 26px;display:flex;flex-direction:column;gap:12px}
+.kicker{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--accent);font-weight:600}
+h1.title{font-family:"Zen Old Mincho","Hiragino Mincho ProN",serif;font-weight:700;
+  font-size:clamp(28px,5.4vw,42px);margin:0;line-height:1.28;letter-spacing:.01em}
+.tagline{color:var(--ink-2);font-size:17px;line-height:1.75;max-width:34ch}
+
+/* ---------- wizard ---------- */
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  box-shadow:var(--shadow-lg);overflow:hidden}
+.qbar{display:flex;gap:6px;padding:16px 26px 0}
+.qbar i{flex:1;height:4px;border-radius:2px;background:var(--surface-2);transition:background .3s}
+.qbar i.on{background:var(--accent)}
+.qbody{padding:26px 26px 30px;display:flex;flex-direction:column;gap:22px}
+.qnum{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.16em;
+  color:var(--ink-3);font-weight:600}
+.qtext{font-family:"Zen Old Mincho",serif;font-size:clamp(21px,3.6vw,28px);font-weight:600;
+  line-height:1.5;margin:0;text-wrap:balance}
+.qhelp{font-size:15px;color:var(--ink-3);line-height:1.75;margin-top:-10px}
+textarea,input.line{width:100%;background:var(--surface-3);border:2px solid var(--rule-strong);
+  border-radius:4px;padding:16px 18px;font-family:inherit;font-size:19px;line-height:1.7;color:var(--ink)}
+textarea{min-height:104px;resize:vertical}
+textarea::placeholder,input.line::placeholder{color:var(--ink-3);font-size:16px}
+textarea:focus,input.line:focus{border-color:var(--accent);outline:none}
+.opts{display:flex;flex-direction:column;gap:11px}
+.opt{display:flex;align-items:center;gap:15px;background:var(--surface-3);
+  border:2px solid var(--rule);border-radius:4px;padding:17px 20px;cursor:pointer;
+  font-family:inherit;font-size:18px;font-weight:500;color:var(--ink);text-align:left;width:100%;
+  transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--accent-wash)}
+.opt .mark{width:20px;height:20px;border-radius:50%;border:2px solid var(--rule-strong);
+  flex:0 0 auto;position:relative}
+.opt.sel .mark{border-color:var(--accent)}
+.opt.sel .mark::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--accent)}
+.qnav{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding-top:4px}
+button.next{background:var(--accent);color:var(--surface);border:none;border-radius:4px;
+  padding:16px 38px;font-family:inherit;font-size:18px;font-weight:700;cursor:pointer;letter-spacing:.05em}
+button.next:hover{background:var(--accent-2)}
+button.next:disabled{opacity:.35;cursor:not-allowed}
+button.back{background:none;border:none;color:var(--ink-3);font-family:inherit;font-size:16px;
+  cursor:pointer;padding:16px 8px;text-decoration:underline;text-underline-offset:4px}
+button.skip{background:none;border:1px solid var(--rule-strong);border-radius:4px;color:var(--ink-2);
+  font-family:inherit;font-size:15px;cursor:pointer;padding:14px 20px}
+
+/* presets */
+.quick{margin-top:26px;display:flex;flex-direction:column;gap:12px}
+.quick .cap{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.qchips{display:flex;gap:10px;flex-wrap:wrap}
+.qchip{background:var(--surface);border:1px solid var(--rule-strong);border-radius:100px;
+  padding:11px 22px;font-size:15.5px;font-family:inherit;color:var(--ink-2);cursor:pointer}
+.qchip:hover{border-color:var(--accent);color:var(--accent)}
+.hint{margin-top:16px;font-size:14px;color:var(--ink-3);line-height:1.8}
+
+/* ---------- loading ---------- */
+.load{margin-top:30px;background:var(--surface);border:1px solid var(--rule);border-radius:6px;
+  padding:30px 26px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow)}
+.lstep{display:flex;align-items:center;gap:16px;font-size:17px;color:var(--ink-3);transition:color .3s}
+.lstep .d{width:10px;height:10px;border-radius:50%;background:var(--rule-strong);flex:0 0 auto;transition:.3s}
+.lstep.on{color:var(--ink);font-weight:700}
+.lstep.on .d{background:var(--accent);transform:scale(1.5)}
+.lstep.done .d{background:var(--accent)}
+
+/* ---------- result ---------- */
+.result{margin-top:30px;display:flex;flex-direction:column;gap:40px}
+.banner{border:1px solid var(--rule-strong);background:var(--surface-2);border-radius:4px;
+  padding:14px 18px;font-size:15px;line-height:1.75;color:var(--ink-2)}
+.banner.warn{border-color:var(--signal);background:var(--signal-wash);color:var(--ink)}
+
+.hero{display:flex;flex-direction:column;gap:14px}
+.was{display:flex;flex-direction:column;gap:4px}
+.was .cap{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.was .txt{font-size:21px;font-weight:700;color:var(--ink-3);
+  text-decoration:line-through;text-decoration-thickness:2px;line-height:1.45}
+.heroline{font-family:"Zen Old Mincho",serif;font-size:clamp(24px,4.6vw,36px);font-weight:700;
+  line-height:1.4;text-wrap:balance}
+.heroline em{font-style:normal;color:var(--accent)}
+
+.secttl{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.secttl h2{font-family:"Zen Old Mincho",serif;font-size:23px;font-weight:600;margin:0;line-height:1.4}
+.secttl .n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--accent);font-weight:600}
+.sec{display:flex;flex-direction:column;gap:18px}
+
+/* match cards — 主役 */
+.matches{display:flex;flex-direction:column;gap:16px}
+.match{background:var(--surface);border:1px solid var(--rule);border-left:5px solid var(--accent);
+  border-radius:5px;padding:24px 26px;display:flex;flex-direction:column;gap:14px;
+  box-shadow:var(--shadow);opacity:0;transform:translateY(8px);animation:rise .5s ease forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.match{opacity:1;transform:none;animation:none}}
+.mtop{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.mname{font-size:clamp(20px,3.4vw,25px);font-weight:900;line-height:1.35;letter-spacing:.01em}
+.badges{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.bdg{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;font-weight:600;
+  padding:4px 11px;border-radius:3px;white-space:nowrap;letter-spacing:.04em;border:1px solid transparent}
+.bdg.a{color:var(--accent);background:var(--accent-wash);border-color:var(--accent)}
+.bdg.b{color:var(--ink-2);background:var(--surface-2);border-color:var(--rule-strong)}
+.bdg.c{color:var(--signal);background:var(--signal-wash);border-color:var(--signal)}
+.bdg.h{color:var(--signal);background:transparent;border-color:var(--signal)}
+.bdg.o{color:var(--ink-2);background:transparent;border-color:var(--rule-strong)}
+.bdg.p{color:var(--accent);background:transparent;border-color:var(--accent)}
+.saying{font-size:18px;line-height:1.75;color:var(--ink);padding:14px 18px;
+  background:var(--surface-3);border-radius:4px;border-left:3px solid var(--rule-strong)}
+.saying::before{content:"「"}.saying::after{content:"」"}
+.from{font-size:14.5px;color:var(--ink-3);line-height:1.7}
+.from b{color:var(--ink-2);font-weight:700}
+
+/* judgement — compact */
+.jgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.jc{background:var(--surface);padding:18px 20px;display:flex;flex-direction:column;gap:7px}
+.jc.unk{background:var(--surface-3)}
+.jc .k{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.jc .v{font-size:20px;font-weight:900;line-height:1.35}
+.jc.unk .v{color:var(--ink-3);font-weight:500}
+.jc .w{font-size:13.5px;color:var(--ink-2);line-height:1.7}
+.unkbar{background:var(--signal-wash);border:1px solid var(--signal);border-radius:4px;
+  padding:14px 18px;font-size:15.5px;line-height:1.7}
+details.rb{border:1px solid var(--rule);border-radius:4px;background:var(--surface-3)}
+details.rb summary{padding:15px 20px;cursor:pointer;font-size:15px;font-weight:700;color:var(--ink-2);
+  list-style:none;display:flex;align-items:center;gap:9px}
+details.rb summary::-webkit-details-marker{display:none}
+details.rb summary::before{content:"▸";color:var(--accent);font-size:12px}
+details.rb[open] summary::before{content:"▾"}
+details.rb .in{padding:0 20px 20px;overflow-x:auto}
+details.rb table{border-collapse:collapse;width:100%;min-width:520px;font-size:14px}
+details.rb th,details.rb td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule);line-height:1.6}
+details.rb th{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.summary{font-size:17px;line-height:1.85;background:var(--accent-wash);border-radius:4px;padding:20px 22px}
+
+.price{display:flex;flex-direction:column;gap:14px}
+.pitem{display:flex;justify-content:space-between;gap:16px;align-items:baseline;
+  padding:14px 18px;background:var(--surface);border:1px solid var(--rule);border-radius:4px;font-size:16px}
+.pitem span:last-child{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;
+  color:var(--ink-3);white-space:nowrap}
+.pnote{font-size:15.5px;line-height:1.8;color:var(--ink-2);border:1px dashed var(--rule-strong);
+  border-radius:4px;padding:18px 20px;background:var(--surface-3)}
+.pnote strong{color:var(--ink)}
+
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--ink-3);line-height:2}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.foot{border-top:1px solid var(--rule);padding-top:20px;color:var(--ink-3);font-size:14px;
+  line-height:1.85;display:flex;flex-direction:column;gap:5px}
+.err{border:1px solid var(--signal);background:var(--signal-wash);border-radius:4px;
+  padding:20px;font-size:16px;line-height:1.8;display:flex;flex-direction:column;gap:14px}
+.again{display:flex;gap:12px;flex-wrap:wrap}
+@media (max-width:600px){
+  body{padding:0 16px 70px;font-size:16px}
+  .qbody{padding:22px 20px 26px}
+  .match{padding:20px}
+}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">Prototype</div>
+  <h1 class="title">見えない付加価値診断</h1>
+  <p class="tagline">5つの質問に答えるだけ。その技術・その人を<strong>必要としている業界</strong>を探します。</p>
+</header>
+
+<div id="stage"></div>
+
+<div class="quick" id="quick">
+  <div class="cap">収録ケースで試す</div>
+  <div class="qchips" id="chips"></div>
+  <p class="hint" id="hint"></p>
+</div>
+
+<div class="load" id="load" hidden></div>
+<div class="result" id="res" hidden></div>
+
+<style>
+/* ---- 問診票バージョン ---- */
+.verbadge{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--accent);
+  border-radius:100px;padding:6px 16px;font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:13px;font-weight:600;color:var(--accent);background:var(--accent-wash);white-space:nowrap}
+.verbadge b{font-size:15px}
+.verrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+
+/* ---- 語彙辞書 ---- */
+.dict{display:flex;flex-direction:column;gap:14px}
+.dentry{background:var(--surface);border:1px solid var(--rule);border-radius:5px;overflow:hidden}
+.dhead{padding:15px 20px;background:var(--surface-3);border-bottom:1px solid var(--rule);
+  font-size:17px;font-weight:700;line-height:1.55}
+.dlist{display:flex;flex-direction:column}
+.drow{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:13px 20px;
+  border-bottom:1px solid var(--rule);align-items:baseline}
+.drow:last-child{border-bottom:none}
+.dind{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.06em;
+  color:var(--ink-3);font-weight:600;line-height:1.7}
+.dsay{font-size:16.5px;line-height:1.7;font-weight:500}
+
+/* ---- 台帳 / 断られた ---- */
+.rejbtn{background:none;border:1px solid var(--rule-strong);border-radius:4px;color:var(--ink-3);
+  font-family:inherit;font-size:14px;cursor:pointer;padding:9px 16px;align-self:flex-start}
+.rejbtn:hover{border-color:var(--signal);color:var(--signal)}
+.rejpanel{border-top:1px dashed var(--rule-strong);padding-top:14px;display:flex;flex-direction:column;gap:11px}
+.rejpanel .t{font-size:15px;font-weight:700;line-height:1.6}
+.rejopts{display:flex;flex-direction:column;gap:8px}
+.rejopt{background:var(--surface-3);border:1px solid var(--rule);border-radius:4px;padding:12px 16px;
+  font-family:inherit;font-size:15.5px;color:var(--ink);cursor:pointer;text-align:left;line-height:1.6}
+.rejopt:hover{border-color:var(--signal);background:var(--signal-wash)}
+.evolve{background:var(--accent-wash);border:1px solid var(--accent);border-radius:4px;
+  padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.evolve .up{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:14px;font-weight:600;color:var(--accent)}
+.evolve .add{font-size:17px;font-weight:700;line-height:1.6}
+.evolve .add::before{content:"＋ 次から聞きます：";}
+.ledger{display:flex;flex-direction:column;gap:10px}
+.lrow{display:grid;grid-template-columns:1fr auto;gap:14px;padding:14px 18px;background:var(--surface);
+  border:1px solid var(--rule);border-radius:4px;font-size:15.5px;line-height:1.7;align-items:baseline}
+.lrow .why{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px;color:var(--signal);white-space:nowrap}
+.lempty{border:1px dashed var(--rule-strong);border-radius:4px;padding:18px 20px;background:var(--surface-3);
+  font-size:15.5px;color:var(--ink-2);line-height:1.8}
+.moat{background:var(--surface);border:2px solid var(--accent);border-radius:5px;padding:22px 24px;
+  display:flex;flex-direction:column;gap:10px}
+.moat .h{font-family:"Zen Old Mincho",serif;font-size:20px;font-weight:700;line-height:1.5}
+.moat p{font-size:16px;line-height:1.8;color:var(--ink-2)}
+.moat strong{color:var(--ink)}
+.miniact{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button.tiny{background:none;border:1px solid var(--rule-strong);border-radius:4px;color:var(--ink-3);
+  font-family:inherit;font-size:13.5px;cursor:pointer;padding:8px 14px}
+button.tiny:hover{border-color:var(--accent);color:var(--accent)}
+</style>
+<script>
+"use strict";
+
+/* ================= 問診票 v1 ================= */
+const BASE_Q = [
+  { key:"label", type:"text", q:"診断したいものは、なんですか。",
+    help:"世間がそれを呼んでいる名前で結構です。",
+    ph:"例）真空管アニール炉をつくる会社／看護師／金型を手で磨く職人" },
+
+  { key:"does", type:"area", q:"それは、いちばん何が得意ですか。",
+    help:"「精度が高い」ではなく、できれば数字で。何度で、何分で、何個まで。",
+    ph:"例）ガラスと金属を、割らずにぴったり接合できる。1000度まで上げて、真空を保ったまま" },
+
+  { key:"fail", type:"area", q:"いちばん失敗しやすいのは、どんな条件のときですか。",
+    help:"失敗する条件が分かると、その力の正体が分かります。",
+    ph:"例）冷やす速度が速すぎると割れる。材料の組み合わせによっては歪みが残る" },
+
+  { key:"refused", type:"choice", q:"他社に断られて、あなたのところに回ってきた仕事はありますか。",
+    help:"「代わりがいるか」は、この出来事で測ります。自己申告では測りません。",
+    opts:[
+      { v:"よくある",  t:"よくある" },
+      { v:"何度かある",t:"何度かある" },
+      { v:"ない",      t:"ない" },
+      { v:"わからない",t:"わからない・数えたことがない" }
+    ]},
+
+  { key:"novice", type:"area", optional:true, q:"新人が必ずつまずくのは、どこですか。",
+    help:"つまずく場所に、言葉になっていない技術が埋まっています。飛ばせます。",
+    ph:"例）温度計の数字ではなく、色を見て判断するところ" },
+
+  { key:"cont", type:"choice", q:"それを続けられなくなる心配は、ありますか。",
+    help:"人の場合は「その職場で誰が代われるか」として答えてください。",
+    opts:[
+      { v:"切迫",      t:"もう失われた／数年内にありうる" },
+      { v:"未定",      t:"決まっていない" },
+      { v:"見込みあり",t:"引き継ぐ相手がいる" },
+      { v:"判定不能",  t:"わからない" }
+    ]}
+];
+
+/* 断られた理由 → 次に追加される質問（外れが問診票を育てる） */
+const REJECTIONS = [
+  { why:"大きさ・規模が合わない",       add:"対応できる大きさの範囲は、どこからどこまでですか。" },
+  { why:"費用が合わない",               add:"1件あたり、いくらから受けられますか。" },
+  { why:"認証・規格が足りない",         add:"すでに取得している規格・認証はありますか。" },
+  { why:"納期が合わない",               add:"1件あたり、どれくらいの期間がかかりますか。" },
+  { why:"相手はすでに自社でやっていた", add:"その業界が自社でやっているかを、確認しましたか。" },
+  { why:"連絡先にたどり着けなかった",   add:"その業界で、決める人はどの部署にいますか。" }
+];
+
+/* 他社に断られて回ってきたか → 代替の探索結果（機械的に導く） */
+const SUB_FROM_REFUSED = {
+  "よくある":  { level:"見つからなかった", scope:"他社が断った仕事が回ってきている。代替が実際に機能していない証拠として扱っています。" },
+  "何度かある":{ level:"限られる",         scope:"他社が断った仕事が回ってきたことがある。代替はあるが数は少ないと見ています。" },
+  "ない":      { level:"ある",             scope:"他社に断られた仕事が回ってきた記録がない。同じことができる相手が他にいると見ています。" },
+  "わからない":{ level:"判定不能",         scope:"数えたことがないため判定していません。埋めずに空けています。" }
+};
+
+const DIFFS=["そのまま","設計変更","認証・規制"];
+const DIFF_CLS={"そのまま":"a","設計変更":"b","認証・規制":"c"};
+const SRC_CLS={"一次":"p","公開":"o","仮説":"h"};
+
+const TYPE_RULES=[
+  ["見つからなかった／限られる","そのまま",  "即当たり型","いま買い手候補に当てられる。まず言い回しの実在を確認する"],
+  ["見つからなかった／限られる","設計変更",  "共同開発型","相手側の設計変更が要る。探す前に条件を詰める"],
+  ["見つからなかった／限られる","認証・規制","認証投資型","時間と資金が要る。単独では届かない"],
+  ["ある","候補3件以上",                     "翻訳不足型","希少性では差がつかない。相手の言葉に書き直せば値がつく余地がある"],
+  ["ある","候補2件以下",                     "価格勝負型","この枠組みでは差がつきにくい。分解をやり直す"],
+  ["判定不能","—",                           "判定不能",  "まず『断られて回ってきた仕事』を数える"]
+];
+function decideType(sub,funcs){
+  const lv=sub&&sub.level;
+  if(!lv||lv==="判定不能") return {name:"判定不能",next:"まず『他社に断られて回ってきた仕事』を数える"};
+  if(lv==="ある") return funcs.length>=3
+    ? {name:"翻訳不足型",next:"希少性では差がつかない。相手の言葉に書き直したうえで、その言い回しが実在するか確認する"}
+    : {name:"価格勝負型",next:"この枠組みでは差がつきにくい。機能の分解をやり直す"};
+  const d=funcs.map(f=>f.diff), s=DIFFS.find(x=>d.includes(x));
+  if(s==="そのまま")   return {name:"即当たり型",next:"いま買い手候補に当てられる。まず言い回しの実在を確認する"};
+  if(s==="設計変更")   return {name:"共同開発型",next:"相手側の設計変更が要る。探す前に条件を詰める"};
+  if(s==="認証・規制") return {name:"認証投資型",next:"時間と資金が要る。単独では届かない"};
+  return {name:"判定不能",next:"到達難易度が1件も判定できていない"};
+}
+
+/* ================= 台帳（この端末のみ・見ている人だけの記録） ================= */
+const LKEY="kmv_ledger_v1";
+function loadLedger(){ try{ return JSON.parse(localStorage.getItem(LKEY)||"[]"); }catch(_){ return []; } }
+function saveLedger(l){ try{ localStorage.setItem(LKEY,JSON.stringify(l)); }catch(_){} }
+let ledger = loadLedger();
+const addedQuestions = () => {
+  const seen=new Set(), out=[];
+  ledger.forEach(e=>{ if(!seen.has(e.add)){ seen.add(e.add); out.push(e.add); } });
+  return out;
+};
+const version = () => 1 + addedQuestions().length;
+const currentQuestions = () => BASE_Q.concat(addedQuestions().map((a,i)=>(
+  { key:"ext"+i, type:"area", optional:true, q:a, help:"外れの記録から追加された質問です。", ph:"" })));
+
+/* ================= 収録ケース ================= */
+const PRESETS={
+  furnace:{ chip:"真空管アニール炉のメーカー",
+    answers:{ label:"真空管アニール炉をつくる装置メーカー",
+      does:"ガラス管を高温・真空のなかで焼きなます。ガラスと金属を、割らずに気密につなげる",
+      fail:"冷やす速度が速すぎると割れる。材料の組み合わせによっては歪みが残る",
+      refused:"何度かある",
+      novice:"温度計の数字ではなく、ガラスの色を見て判断するところ",
+      cont:"切迫" },
+    data:{ label:"真空管アニール炉の装置メーカー", kind:"技術",
+      functions:[
+        {id:"F4",fn:"硬いガラスを、狙った形に削り、溶かしてつなぐ",
+         cond:"手の感覚に頼る部分が大きく、手順が数値になっていない",
+         demand:"炉に入れる特注の管と受け皿を、図面どおりに作ってほしい",
+         target:"半導体製造装置の石英部材",diff:"そのまま",src:"仮説",
+         aliases:[{ind:"ガラス加工",say:"石英の曲げ・熔着"},{ind:"半導体装置",say:"石英チューブ・ボートの特注"},{ind:"分析機器",say:"光学セルの製作"}]},
+        {id:"F2",fn:"高い温度を保ったまま、空気を抜いた状態を保ち続ける",
+         cond:"高温だと材料から気体がにじみ出て、真空が保てなくなる",
+         demand:"酸化させずに、金属をじっくり熱処理したい",
+         target:"金属3Dプリントの応力除去",diff:"設計変更",src:"仮説",
+         aliases:[{ind:"熱処理",say:"真空焼鈍・光輝焼鈍"},{ind:"金属積層造形",say:"造形後の応力除去"},{ind:"電池材料",say:"脱ガス・焼成"}]},
+        {id:"F3",fn:"炉の中の温度を均一に保ち、狙った速さで上げ下げしてひずみを消す",
+         cond:"炉内に温度のムラができると、ひずみが残る",
+         demand:"造形したあとに残る反りやひずみを、確実に抜きたい",
+         target:"精密光学部品の徐冷工程",diff:"設計変更",src:"仮説",
+         aliases:[{ind:"光学",say:"レンズの徐冷"},{ind:"積層造形",say:"反りの矯正"},{ind:"ガラス",say:"アニール"}]},
+        {id:"F1",fn:"ガラスと金属を、熱で割らずに気密につなぐ",
+         cond:"冷えるときの力で割れる",
+         demand:"体液が入り込まない、気密の電極の通し口がほしい",
+         target:"体内に埋め込む医療機器",diff:"認証・規制",src:"仮説",
+         aliases:[{ind:"電子部品",say:"気密封止・ハーメチックシール"},{ind:"医療機器",say:"体液が入らない電極の通し口"},{ind:"真空機器",say:"リークしない貫通部"}]}
+      ],
+      tacit:"温度計の数字ではなく、ガラスの色を見て判断する。ここが手順書になっていない。",
+      continuity:{level:"切迫",subject:"事業",note:"製造元は既に廃業。継ぎ手はいない。",src:"一次"},
+      verifiedDemand:0,
+      costs:["装置の再設計・再製作にかかる費用","代替を探している間、実験が止まっていた期間","医療用途に届かせる場合の認証取得の期間"],
+      note:"決算書の上では「売上の小さい、先細りの町工場」にしか見えません。機能まで割ると、別の分野の後工程に届きます。ただし届く先はいずれも仮説で、その業界が本当にこの言い回しで探しているかは、まだ確認していません。"
+    }},
+
+  nurse:{ chip:"看護師",
+    answers:{ label:"看護師",
+      does:"複数の患者さんを同時に受け持ち、容体の変化を見て対応の順番を組み替えながら現場を回す",
+      fail:"情報が足りないまま、数十秒で決めないといけないとき",
+      refused:"ない",
+      novice:"どの患者さんを先に見るか、の順番づけ",
+      cont:"未定" },
+    data:{ label:"看護師", kind:"人材",
+      functions:[
+        {id:"N1",fn:"多数の相手の状態を同時に見張り、異変の兆しで順番を組み替える",
+         cond:"見張る対象が増えても、判断の速さを落とせない",
+         demand:"現場を止めずに、突発の対応をさばける人がほしい",
+         target:"現場オペレーションの管理職",diff:"そのまま",src:"仮説",
+         aliases:[{ind:"製造現場",say:"複数ラインの同時監視と割り込み対応"},{ind:"物流",say:"当日の配車組み替え"},{ind:"IT運用",say:"インシデントのトリアージ"}]},
+        {id:"N2",fn:"協力的でない相手から、必要なことを短い時間で聞き出す",
+         cond:"相手が言葉にしてくれない。聞き方を間違えると閉じる",
+         demand:"言語化してくれない顧客の要求を掴める人がほしい",
+         target:"カスタマーサクセス",diff:"そのまま",src:"仮説",
+         aliases:[{ind:"営業",say:"要件が固まっていない顧客のヒアリング"},{ind:"カスタマーサクセス",say:"解約理由の掘り起こし"},{ind:"調査",say:"非協力的な対象への聴取"}]},
+        {id:"N3",fn:"情報が足りないまま、数十秒で決めて動く",
+         cond:"間違えたときの代償が大きく、後戻りできない",
+         demand:"手順書にない事態を、その場でさばける人がほしい",
+         target:"宿泊・大型施設のマネジメント",diff:"設計変更",src:"仮説",
+         aliases:[{ind:"宿泊",say:"クレームの初動判断"},{ind:"イベント運営",say:"当日トラブルの現場裁量"},{ind:"防災",say:"初動対応"}]}
+      ],
+      tacit:"どの患者を先に見るか、の順番づけ。基準が言葉になっていない。",
+      continuity:{level:"未定",subject:"組織",note:"個人は採点しません。測るのは組織側の依存度です。",src:"仮説"},
+      verifiedDemand:0,
+      costs:["同じ機能を持つ人を外から採用し、立ち上げるまでの期間","その間、現場が回らないことの影響"],
+      note:"履歴書には「看護師」の3文字しか書けません。機能まで割ると、現場運営職が求めている力と重なります。繋がっていないのは能力ではなく、双方が使っている言葉です。"
+    }},
+
+  freeze:{ chip:"検証用：業務用の製氷機メーカー",
+    answers:{ label:"業務用の製氷機・冷凍冷蔵庫のメーカー",
+      does:"飲食店の厨房向けに、素早く冷やし、温度を一定に保つ",
+      fail:"庫内の場所によって温度がばらつくとき", refused:"わからない",
+      novice:"", cont:"判定不能" },
+    data:null }
+};
+
+/* ================= プロンプト ================= */
+function buildPrompt(a, sub, extra){
+  return [
+"あなたは「見えない付加価値の評価機関」の診断エンジンです。",
+"最重要の原則：観測できていないことは、埋めずに『判定不能』と書くこと。推測で埋めないこと。",
+"",
+"# 利用者の回答（問診票 v"+version()+"）",
+"対象: "+a.label,
+"得意なこと: "+a.does,
+"失敗しやすい条件: "+(a.fail||"（未記入）"),
+"他社に断られて回ってきた仕事: "+a.refused,
+"新人がつまずくところ: "+(a.novice||"（未記入）"),
+"続けられなくなる心配: "+a.cont,
+extra||"",
+"",
+"# やること",
+"1. label: 対象を、世間が呼んでいる名前で1行。",
+"2. kind: 人や職種なら「人材」、それ以外は「技術」。",
+"3. functions: 得意なことと『失敗しやすい条件』から、力の単位に3〜4個へ分解する。",
+"   厳守: 「動詞＋目的語」で書く。専門用語・製品名・略語を使わない。中学生が読んで分かる言葉だけ。",
+"   ヒント: 失敗しやすい条件は、その力の限界＝正体を示している。必ず分解に使うこと。",
+"   各機能に付ける項目:",
+"     cond: 何が難しいのかを1行。",
+"     demand: その力を欲しがっている『別の分野の人』が実際に口にする言い回しを1文。鉤括弧は付けない。専門用語を使わない。",
+"     target: その分野の具体名。厳守: 入力と同じ業界を選ばない。必ず別の分野にする。短く。",
+"     diff: そのまま / 設計変更 / 認証・規制 のいずれか。『認証・規制』は該当する規制の名前を書ける場合だけ。",
+"     src: 一次 / 公開 / 仮説。入力に書かれていない推論は必ず『仮説』。",
+"     aliases: 同じ力を、業界ごとに何と呼んでいるかを3つ。[{\"ind\":\"業界名\",\"say\":\"その業界での呼び方\"}]",
+"          厳守: 3つとも違う業界にする。実際にその業界で使われている言い方を書く。",
+"   並び順: diff が『そのまま』のものを先頭に、『認証・規制』を最後にする。",
+"4. tacit: 『新人がつまずくところ』から、言葉になっていない技術がどこにあるかを1文。未記入なら空文字。",
+"5. continuity: level は入力の『続けられなくなる心配』をそのまま使う。",
+"   subject: 技術なら『事業』、人材なら必ず『組織』。",
+"   note: 1文。人材の場合、個人を採点しない。組織側の依存度として書く。src は 一次/公開/仮説。",
+"6. verifiedDemand: 実在を確認する手段がないので、必ず 0。",
+"7. costs: 『値がつくとしたら、その値はどの費目から来るか』の項目名を2〜3個。厳守: 金額を書かない。",
+"8. note: 2〜3文。『既存の評価軸（決算書または履歴書）では何に見えるか』と『機能まで割ると何に繋がるか』の対比を含める。",
+"   さらに、まだ確認できていないことを1文で正直に書く。",
+"",
+"# 禁止（違反は不可）",
+"- 実在しない企業名・団体名を書かない。",
+"- 金額・市場規模・売上・年数など、裏の取れない数値を一切書かない。",
+"- 「唯一」「必ず」「間違いなく」などの断定を使わない。",
+"",
+"# 出力",
+"JSONのみ。前後に説明文を付けない。",
+'{"label":"...","kind":"技術","functions":[{"id":"F1","fn":"...","cond":"...","demand":"...","target":"...","diff":"そのまま","src":"仮説","aliases":[{"ind":"...","say":"..."}]}],',
+'"tacit":"...","continuity":{"level":"未定","subject":"事業","note":"...","src":"仮説"},',
+'"verifiedDemand":0,"costs":["..."],"note":"..."}'
+  ].join("\n");
+}
+
+/* ================= 状態 ================= */
+const $=id=>document.getElementById(id);
+const stage=$("stage"), load=$("load"), res=$("res"), chips=$("chips"), hint=$("hint"), quick=$("quick");
+let step=0, answers={}, sampleFn=null, timers=[], lastData=null;
+const esc=s=>{const d=document.createElement("div");d.textContent=s==null?"":String(s);return d.innerHTML;};
+const clearT=()=>{timers.forEach(clearTimeout);timers=[];};
+
+Object.keys(PRESETS).forEach(k=>{
+  const b=document.createElement("button");
+  b.type="button"; b.className="qchip"; b.textContent=PRESETS[k].chip;
+  b.addEventListener("click",()=>{ answers=Object.assign({},PRESETS[k].answers); go(k); });
+  chips.appendChild(b);
+});
+
+(async()=>{
+  try{ sampleFn=(window.claude&&typeof window.claude.use==="function")
+    ? await window.claude.use("sample") : null; }catch(_){ sampleFn=null; }
+  hint.innerHTML = sampleFn
+    ? "自由入力もその場で診断します。分からない項目は、埋めずに<strong>判定不能</strong>と出します。"
+    : "この表示環境ではライブ診断が使えないため、<strong>収録ケースのみ</strong>動作します。";
+})();
+
+/* ================= ウィザード ================= */
+function drawStep(){
+  const QS=currentQuestions();
+  if(step>=QS.length) step=QS.length-1;
+  const q=QS[step], val=answers[q.key]||"";
+  const bars=QS.map((_,i)=>`<i class="${i<=step?"on":""}"></i>`).join("");
+  let field="";
+  if(q.type==="choice"){
+    field=`<div class="opts">${q.opts.map(o=>
+      `<button type="button" class="opt ${val===o.v?"sel":""}" data-v="${esc(o.v)}">
+         <span class="mark"></span><span>${esc(o.t)}</span></button>`).join("")}</div>`;
+  } else if(q.type==="area"){
+    field=`<textarea id="f" placeholder="${esc(q.ph)}">${esc(val)}</textarea>`;
+  } else {
+    field=`<input class="line" id="f" placeholder="${esc(q.ph)}" value="${esc(val)}">`;
+  }
+  stage.innerHTML=`<div class="card">
+    <div class="qbar">${bars}</div>
+    <div class="qbody">
+      <div class="verrow">
+        <div class="qnum">質問 ${step+1} / ${QS.length}</div>
+        <span class="verbadge">問診票 <b>v${version()}</b></span>
+      </div>
+      <h2 class="qtext">${esc(q.q)}</h2>
+      <p class="qhelp">${esc(q.help)}</p>
+      ${field}
+      <div class="qnav">
+        <button class="next" id="nx">${step===QS.length-1?"診断する":"次へ"}</button>
+        ${q.optional?`<button class="skip" id="sk">飛ばす</button>`:""}
+        ${step>0?`<button class="back" id="bk">戻る</button>`:""}
+      </div>
+    </div></div>`;
+
+  const f=$("f"), nx=$("nx");
+  const sync=()=>{ if(f) answers[q.key]=f.value.trim();
+    nx.disabled = !q.optional && !(answers[q.key]||"").trim(); };
+  if(f){ f.addEventListener("input",sync); sync(); f.focus();
+    f.addEventListener("keydown",e=>{ if(e.key==="Enter"&&q.type!=="area"){e.preventDefault(); if(!nx.disabled) nx.click();} }); }
+  if(q.type==="choice"){
+    nx.disabled=!val;
+    stage.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>{
+      answers[q.key]=b.dataset.v;
+      stage.querySelectorAll(".opt").forEach(x=>x.classList.remove("sel"));
+      b.classList.add("sel"); nx.disabled=false; }));
+  }
+  nx.addEventListener("click",()=>{ if(step<QS.length-1){ step++; drawStep(); } else go(null); });
+  const sk=$("sk"); if(sk) sk.addEventListener("click",()=>{ answers[q.key]=""; step++; drawStep(); });
+  const bk=$("bk"); if(bk) bk.addEventListener("click",()=>{ step--; drawStep(); });
+}
+
+/* ================= 実行 ================= */
+const LSTEPS=["答えを読む","失敗する条件から、力の正体を割り出す",
+  "その力を、業界ごとの言い方へ翻訳する","答えられた事実だけで判定する"];
+function showLoad(){
+  clearT();
+  load.innerHTML=LSTEPS.map((s,i)=>`<div class="lstep"><span class="d"></span><span>${esc(s)}</span></div>`).join("");
+  load.hidden=false; res.hidden=true; res.innerHTML=""; stage.innerHTML=""; quick.hidden=true;
+  let i=0;
+  const adv=()=>{ load.querySelectorAll(".lstep").forEach((el,n)=>{
+      el.classList.toggle("on",n===i); el.classList.toggle("done",n<i); });
+    if(i<LSTEPS.length-1){ i++; timers.push(setTimeout(adv,1300+i*450)); } };
+  adv();
+}
+function hideLoad(){ clearT(); load.hidden=true; }
+
+async function go(presetKey){
+  const preset=(presetKey&&PRESETS[presetKey]&&PRESETS[presetKey].data)?presetKey:null;
+  showLoad();
+  const sub = SUB_FROM_REFUSED[answers.refused] || SUB_FROM_REFUSED["わからない"];
+  const extras = addedQuestions().map((a,i)=>answers["ext"+i]?("追加質問「"+a+"」への回答: "+answers["ext"+i]):"").filter(Boolean).join("\n");
+
+  if(!sampleFn){
+    if(preset){ setTimeout(()=>{ hideLoad();
+      render(PRESETS[preset].data, sub, {html:"この表示環境ではライブ診断が使えないため、<strong>収録済みの結果</strong>を表示しています。"});
+    },2100); }
+    else{ hideLoad(); showErr("この表示環境ではライブ診断が使えません。収録ケースからお試しください。",null,sub); }
+    return;
+  }
+  try{
+    const d=await sampleFn.json(buildPrompt(answers,sub,extras),{modelTier:"default"});
+    hideLoad();
+    if(!d||!Array.isArray(d.functions)||!d.functions.length) showErr("診断結果を読み取れませんでした。",preset,sub);
+    else render(d,sub,null);
+  }catch(e){ hideLoad(); showErr(ERR[e&&e.code]||"診断に失敗しました。時間をおいてお試しください。",preset,sub); }
+}
+const ERR={not_granted:"この機能の利用が許可されませんでした。",
+  sampling_disabled:"この表示環境ではライブ診断が無効になっています。",
+  not_declared:"この表示環境ではライブ診断が使えません。",
+  rate_limited:"短時間に呼び出しすぎました。少し待ってからお試しください。",
+  refused:"この入力では診断できませんでした。書き方を変えてお試しください。",
+  prompt_too_large:"入力が長すぎます。短くしてお試しください。",
+  invalid_json:"診断結果の形式が崩れました。もう一度お試しください。",
+  empty_completion:"診断結果が返りませんでした。もう一度お試しください。",
+  cancelled:"診断を中止しました。"};
+
+function showErr(msg,preset,sub){
+  res.innerHTML=`<div class="err"><div>${esc(msg)}</div><div class="again">
+    ${preset?`<button class="skip" id="fb">収録済みの結果を表示する</button>`:""}
+    <button class="skip" id="rs">はじめから</button></div></div>`;
+  res.hidden=false;
+  const fb=$("fb"); if(fb) fb.addEventListener("click",()=>render(PRESETS[preset].data,sub,
+    {warn:true,html:"ライブ診断が使えなかったため、<strong>収録済みの結果</strong>を表示しています。"}));
+  $("rs").addEventListener("click",restart);
+}
+function restart(){ step=0; answers={}; res.hidden=true; res.innerHTML="";
+  load.hidden=true; quick.hidden=false; drawStep(); window.scrollTo({top:0,behavior:"smooth"}); }
+
+/* ================= 結果 ================= */
+function render(d,sub,note){
+  lastData=d;
+  const funcs=(d.functions||[]).slice(0,5);
+  const cont=d.continuity||{level:"判定不能",subject:"事業",note:"",src:"仮説"};
+  const vd=Number.isFinite(d.verifiedDemand)?d.verifiedDemand:0;
+  const t=decideType(sub,funcs);
+  const unk=[]; if(sub.level==="判定不能")unk.push("代替の探索");
+  if(cont.level==="判定不能")unk.push(cont.subject==="組織"?"引き継ぎ困難度":"切迫度");
+  if(vd===0)unk.push("言い回しが実在するかの確認");
+  const contName=cont.subject==="組織"?"引き継ぎ困難度":"失われる切迫度";
+
+  res.innerHTML=`
+  ${note?`<div class="banner ${note.warn?"warn":""}">${note.html}</div>`:""}
+
+  <div class="hero">
+    <div class="verrow"><span class="verbadge">問診票 <b>v${version()}</b> で診断</span>
+      <span class="verbadge" style="color:var(--ink-3);border-color:var(--rule-strong);background:var(--surface-3)">外れの記録 <b>${ledger.length}</b>件</span></div>
+    <div class="was"><div class="cap">世間が付けている名前</div><div class="txt">${esc(d.label)}</div></div>
+    <div class="heroline">この力を必要としているのは、<br><em>${funcs.length}つの、別の業界でした。</em></div>
+  </div>
+
+  <div class="sec">
+    <div class="secttl"><span class="n">01</span><h2>必要としている業界</h2></div>
+    <div class="matches">
+      ${funcs.map((f,i)=>`
+        <div class="match" style="animation-delay:${i*0.14}s" data-i="${i}">
+          <div class="mtop">
+            <div class="mname">${esc(f.target)}</div>
+            <div class="badges">
+              <span class="bdg ${DIFF_CLS[f.diff]||"b"}">${esc(f.diff)}</span>
+              <span class="bdg ${SRC_CLS[f.src]||"h"}">${esc(f.src||"仮説")}</span>
+            </div>
+          </div>
+          <div class="saying">${esc(f.demand)}</div>
+          <div class="from"><b>この力から：</b>${esc(f.fn)}<br><b>難しさ：</b>${esc(f.cond)}</div>
+          <button class="rejbtn" data-rej="${i}">ここに当てて、断られた</button>
+          <div class="rejpanel" data-panel="${i}" hidden></div>
+        </div>`).join("")}
+    </div>
+    <div class="legend">
+      <span><span class="bdg a">そのまま</span> 手を加えず届く</span>
+      <span><span class="bdg b">設計変更</span> 相手側の変更が要る</span>
+      <span><span class="bdg c">認証・規制</span> 時間と資金が要る</span>
+      <span><span class="bdg p">一次</span> 本人から得た事実</span>
+      <span><span class="bdg h">仮説</span> 未検証</span>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="secttl"><span class="n">02</span><h2>同じ力が、業界ごとに別の名前で呼ばれている</h2></div>
+    <div class="dict">
+      ${funcs.filter(f=>Array.isArray(f.aliases)&&f.aliases.length).map(f=>`
+        <div class="dentry">
+          <div class="dhead">${esc(f.fn)}</div>
+          <div class="dlist">${f.aliases.slice(0,4).map(al=>
+            `<div class="drow"><div class="dind">${esc(al.ind)}</div><div class="dsay">${esc(al.say)}</div></div>`).join("")}</div>
+        </div>`).join("")}
+    </div>
+    <p class="summary">呼び方が違うから、探しても見つかりません。<strong>この対応表を持っている者だけが、橋を架けられます。</strong></p>
+  </div>
+
+  ${d.tacit?`<div class="sec">
+    <div class="secttl"><span class="n">03</span><h2>言葉になっていない技術</h2></div>
+    <p class="summary">${esc(d.tacit)}</p>
+    <p class="pnote">「新人がつまずくところ」から取り出しました。<strong>本人に聞かないと出てこない情報です。</strong>公開情報からは取れません。</p>
+  </div>`:""}
+
+  <div class="sec">
+    <div class="secttl"><span class="n">04</span><h2>判定</h2></div>
+    ${unk.length?`<div class="unkbar"><strong>判定不能 ${unk.length}項目</strong> ─ ${esc(unk.join(" ／ "))}。埋めずに空けています。</div>`:""}
+    <div class="jgrid">
+      <div class="jc"><div class="k">型</div><div class="v" style="color:var(--accent)">${esc(t.name)}</div><div class="w">${esc(t.next)}</div></div>
+      <div class="jc ${sub.level==="判定不能"?"unk":""}"><div class="k">代替の探索結果</div><div class="v">${esc(sub.level)}</div><div class="w">${esc(sub.scope)}</div></div>
+      <div class="jc"><div class="k">届いた業界／確認済</div><div class="v">${funcs.length}件 ／ ${vd}件</div><div class="w">${vd===0?"言い回しの実在は未確認です。残りは仮説。":"確認済みの件数です。"}</div></div>
+      <div class="jc ${cont.level==="判定不能"?"unk":""}"><div class="k">${esc(contName)}</div><div class="v">${esc(cont.level)}</div><div class="w">${esc(cont.note)}</div></div>
+    </div>
+    <details class="rb"><summary>型はこの表で機械的に決まります</summary>
+      <div class="in"><table>
+        <thead><tr><th>代替の探索結果</th><th>条件</th><th>型</th><th>次の一手</th></tr></thead>
+        <tbody>${TYPE_RULES.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td><strong>${esc(r[2])}</strong></td><td>${esc(r[3])}</td></tr>`).join("")}</tbody>
+      </table></div></details>
+    <p class="summary">${esc(d.note)}</p>
+  </div>
+
+  <div class="sec">
+    <div class="secttl"><span class="n">05</span><h2>外れの台帳</h2></div>
+    <div class="moat">
+      <div class="h">断られるたびに、問診票が1つ賢くなります。</div>
+      <p>上の業界カードで<strong>「ここに当てて、断られた」</strong>を押してみてください。断られた理由から、<strong>次に聞くべき質問</strong>が問診票に追加されます。</p>
+      <p>候補を出すことは誰にでもできます。<strong>外し方を知っていることは、外した回数でしか手に入りません。</strong>ここが真似できない部分です。</p>
+    </div>
+    <div id="ledgerbox"></div>
+  </div>
+
+  <div class="sec">
+    <div class="secttl"><span class="n">06</span><h2>値づけ</h2></div>
+    <div class="price">
+      ${(d.costs||[]).map(c=>`<div class="pitem"><span>${esc(typeof c==="string"?c:(c&&c.item))}</span><span>買い手への照会で確定</span></div>`).join("")}
+      <div class="pnote"><strong>金額はこの診断では出しません。</strong>根拠のない数字で値をつけたら、私たちの主張そのものが崩れるからです。値は買い手が決めます。この診断が出すのは、<strong>誰に見積を頼めばよいか</strong>と、<strong>その見積書の項目</strong>です。（成約実績 0件）</div>
+    </div>
+  </div>
+
+  <div class="again"><button class="next" id="rs2">もう一度診断する</button>
+    <button class="tiny" id="clr">台帳をリセット（デモ用）</button></div>
+
+  <div class="foot">
+    <div>・<strong>仮説</strong>と付いた項目は未検証です。出所の付かない主張は表示していません。</div>
+    <div>・金額・市場規模・年数は、出典が確定するまで記載しません。</div>
+    <div>・外れの台帳は、この端末のブラウザにのみ保存されます。</div>
+    <div>・本ページはプロトタイプです。実サービスの評価結果ではありません。</div>
+  </div>`;
+
+  res.hidden=false; quick.hidden=true;
+  drawLedger();
+  res.querySelectorAll("[data-rej]").forEach(b=>b.addEventListener("click",()=>openRej(+b.dataset.rej,funcs)));
+  $("rs2").addEventListener("click",restart);
+  $("clr").addEventListener("click",()=>{ ledger=[]; saveLedger(ledger); render(d,sub,null); });
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function openRej(i,funcs){
+  const p=res.querySelector(`[data-panel="${i}"]`);
+  if(!p) return;
+  if(!p.hidden){ p.hidden=true; return; }
+  p.hidden=false;
+  p.innerHTML=`<div class="t">断られた理由は、どれに近いですか。</div>
+    <div class="rejopts">${REJECTIONS.map((r,n)=>
+      `<button class="rejopt" data-r="${n}">${esc(r.why)}</button>`).join("")}</div>`;
+  p.querySelectorAll("[data-r]").forEach(b=>b.addEventListener("click",()=>{
+    const r=REJECTIONS[+b.dataset.r];
+    const before=version();
+    ledger.push({target:funcs[i].target, why:r.why, add:r.add});
+    saveLedger(ledger);
+    const after=version();
+    p.innerHTML=`<div class="evolve">
+      <div class="up">問診票 v${before} → v${after}</div>
+      <div class="add">${esc(r.add)}</div>
+    </div>`;
+    res.querySelectorAll(".verbadge b").forEach((el,n)=>{ el.textContent = n===0?("v"+after):String(ledger.length); });
+    drawLedger();
+  }));
+}
+
+function drawLedger(){
+  const box=$("ledgerbox"); if(!box) return;
+  if(!ledger.length){
+    box.innerHTML=`<div class="lempty">まだ1件も記録がありません。<strong>ここが0件のうちは、優位性はありません。</strong>正直にそう表示します。</div>`;
+    return;
+  }
+  box.innerHTML=`<div class="ledger">${ledger.map(e=>
+    `<div class="lrow"><span><strong>${esc(e.target)}</strong><br><span style="color:var(--ink-3);font-size:14px">＋ ${esc(e.add)}</span></span>
+     <span class="why">${esc(e.why)}</span></div>`).join("")}</div>`;
+}
+
+drawStep();
+</script>
+
+</div>

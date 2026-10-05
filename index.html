@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>柵の点検の前工程と共有台帳｜株式会社skyer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Libre+Franklin:wght@800;900&family=Rampart+One&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brown:#b5784b; --brown-dk:#9a6825; --green:#4ca957; --green-dk:#2b7a3a;
+  --leaf:#cfe5d2; --leaf-soft:#f1f6f0; --sand:#fbf6ea; --gray:#f2f2ef;
+  --ink:#333333; --muted:#6b6b66; --line:#d6d6d0; --white:#ffffff; --night:#1b1b1b;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--white);color:var(--ink);
+  font-family:"Noto Sans JP",system-ui,sans-serif;font-size:16px;line-height:1.9;letter-spacing:.03em}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+
+/* header */
+header{position:relative;height:84px}
+.blob-logo{position:absolute;left:0;top:0;width:250px;height:100px}
+.blob-logo span{position:absolute;left:18px;top:22px;color:#fff;font-weight:700;font-size:.95rem;letter-spacing:.08em}
+header nav{position:absolute;right:16px;top:26px;display:flex;gap:22px;font-size:.82rem;font-weight:500}
+header nav a{text-decoration:none}
+@media (max-width:720px){header nav{display:none}}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding:40px 0 0}
+.hero .en{font-family:"Libre Franklin",sans-serif;font-weight:900;color:var(--brown);
+  font-size:clamp(3rem,9vw,5.4rem);line-height:1;letter-spacing:.02em;margin:0}
+.hero .jp{color:var(--brown);font-weight:700;font-size:clamp(1.15rem,2.8vw,1.6rem);margin:.4em 0 0;line-height:1.5}
+.hero .tag{display:inline-block;margin-top:14px;border:1.5px solid var(--brown);color:var(--brown);
+  border-radius:999px;padding:2px 14px;font-size:.8rem;font-weight:700}
+.scene{display:block;width:100%;height:auto;margin-top:8px}
+
+/* anchor buttons */
+.anchors{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:40px auto 0}
+.anchors a{display:flex;align-items:center;justify-content:center;gap:10px;border:1.5px solid var(--ink);
+  padding:12px 8px;font-weight:700;font-size:.95rem;text-decoration:none;background:#fff;text-align:center;line-height:1.4}
+.anchors a::after{content:"";width:8px;height:8px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);
+  transform:rotate(45deg) translateY(-3px);flex:none}
+.anchors a:hover{background:var(--leaf-soft)}
+@media (max-width:720px){.anchors{grid-template-columns:repeat(2,1fr)}}
+
+/* green lead box */
+.lead-box{position:relative;background:var(--green);color:#fff;border-radius:32px;
+  padding:44px 32px 40px;margin:64px auto 0;max-width:820px;text-align:center}
+.lead-box h2{font-family:"Rampart One",cursive;font-weight:400;font-size:clamp(2rem,5.4vw,3rem);
+  line-height:1.3;margin:0 0 .5em;letter-spacing:.06em}
+.lead-box p{margin:.5em 0;font-weight:500;line-height:2}
+.now{display:inline-block;margin-top:18px;background:#fff;color:var(--green-dk);border-radius:14px;
+  padding:12px 18px;font-weight:700;font-size:.92rem;line-height:1.8;text-align:left}
+
+/* sections */
+section{padding:88px 0 0}
+.sec-title{text-align:center;margin:0 0 34px}
+.sec-title .en{display:block;font-family:"Libre Franklin",sans-serif;font-weight:800;color:var(--brown);
+  font-size:.85rem;letter-spacing:.2em}
+.sec-title h3{margin:.1em 0 0;font-size:clamp(1.35rem,3vw,1.7rem);font-weight:900;color:var(--ink)}
+.narrow{max-width:820px;margin:0 auto}
+.src{font-size:.78rem;color:var(--muted);line-height:1.7}
+.src a{color:var(--muted)}
+
+
+/* insight */
+.insight{display:grid;grid-template-columns:1fr 60px 1fr;align-items:stretch;gap:0}
+.view{border-radius:24px;padding:26px 24px}
+.view .lbl{font-size:.82rem;font-weight:900;letter-spacing:.12em}
+.view h4{margin:.2em 0 .5em;font-size:1.25rem;line-height:1.6;font-weight:900}
+.view p{margin:0;font-size:.94rem}
+.view.common{background:var(--gray);color:var(--muted)}
+.view.ours{background:var(--brown);color:#fff}
+.vs{align-self:center;justify-self:center;font-family:"Libre Franklin",sans-serif;font-weight:900;color:var(--brown);font-size:1.3rem}
+@media (max-width:760px){.insight{grid-template-columns:1fr}.vs{margin:10px 0}}
+.evidence{margin-top:22px;display:grid;gap:12px}
+.ev{display:grid;grid-template-columns:150px 1fr;gap:16px;border-bottom:1px dashed var(--line);padding:10px 4px}
+.ev .k{font-family:"Libre Franklin","Noto Sans JP",sans-serif;font-weight:900;color:var(--brown);font-size:1.5rem;line-height:1.3}
+.ev .k small{font-size:.8rem;font-family:"Noto Sans JP",sans-serif;font-weight:700;display:block;color:var(--muted)}
+.ev p{margin:0;font-size:.94rem}
+@media (max-width:560px){.ev{grid-template-columns:1fr;gap:2px}}
+.unsure{margin-top:20px;background:var(--leaf-soft);border-radius:16px;padding:16px 20px;font-size:.94rem}
+.unsure b{color:var(--green-dk)}
+.unsure ul{margin:.3em 0 0;padding-left:1.2em}
+
+/* why now */
+.why{position:relative;background:var(--sand);border-radius:32px;padding:36px 32px}
+.why .quote{font-weight:700;font-size:1.08rem;color:var(--brown-dk);border-left:5px solid var(--brown);
+  padding-left:14px;margin:0 0 16px;line-height:1.8}
+.steps-mini{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:18px 0 6px}
+.steps-mini span{background:#fff;border:1.5px solid var(--brown);border-radius:999px;padding:4px 14px;font-size:.88rem;font-weight:700}
+.steps-mini i{color:var(--brown);font-style:normal;font-weight:900}
+
+/* flow cards */
+.flow{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr;align-items:stretch}
+.card{border:2px solid var(--green);border-radius:4px;padding:22px 20px;background:#fff}
+.card .no{color:var(--green);font-weight:900;font-size:.85rem;letter-spacing:.1em}
+.card h4{margin:.1em 0 .4em;font-size:1.3rem;color:var(--green-dk);font-weight:900}
+.card p{margin:0;font-size:.93rem;line-height:1.85}
+.card.mid{background:var(--green);color:#fff}
+.card.mid .no,.card.mid h4{color:#fff}
+.card svg{display:block;width:72px;height:72px;margin:0 auto 8px}
+.chev{align-self:center;justify-self:center;width:0;height:0;border-top:16px solid transparent;
+  border-bottom:16px solid transparent;border-left:16px solid var(--green)}
+@media (max-width:820px){.flow{grid-template-columns:1fr}.chev{border-left:16px solid transparent;border-right:16px solid transparent;
+  border-top:16px solid var(--green);border-bottom:0;margin:10px 0}}
+
+/* tables (solution / difference) */
+.tbl-wrap{overflow-x:auto;margin-top:18px}
+.tbl{width:100%;border-collapse:collapse;font-size:.9rem;background:#fff;min-width:620px}
+.tbl th,.tbl td{border:1px solid var(--line);padding:10px 12px;vertical-align:top;text-align:left;line-height:1.7}
+.tbl thead th{background:var(--leaf-soft);color:var(--green-dk);font-weight:900}
+.tbl tbody th{font-weight:700;background:var(--gray)}
+.tbl tr.ours th,.tbl tr.ours td{background:#f7ece2;color:var(--brown-dk);font-weight:700}
+.lead-p{margin:0 0 6px}
+
+/* who */
+.who{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.stat{background:var(--leaf-soft);border-radius:24px;padding:26px 24px;text-align:center}
+.stat .num{font-family:"Libre Franklin",sans-serif;font-weight:900;color:var(--green-dk);font-size:clamp(2.4rem,6vw,3.2rem);line-height:1.1}
+.stat .num small{font-family:"Noto Sans JP",sans-serif;font-size:1.1rem;font-weight:900;margin-left:4px}
+.stat .cap{font-size:.88rem;color:var(--muted);margin-top:6px;line-height:1.7}
+@media (max-width:640px){.who{grid-template-columns:1fr}}
+
+/* track record */
+.rec{display:grid;gap:14px}
+.rec-item{display:grid;grid-template-columns:190px 1fr;gap:18px;background:var(--gray);border-radius:16px;padding:20px 22px}
+.rec-item .lbl{font-weight:900;color:var(--brown-dk);line-height:1.6}
+.rec-item p{margin:0;font-size:.95rem}
+@media (max-width:640px){.rec-item{grid-template-columns:1fr;gap:6px}}
+.note{margin-top:16px;font-weight:700;color:var(--brown-dk)}
+
+/* milestones */
+.ms{list-style:none;margin:0;padding:0;position:relative}
+.ms::before{content:"";position:absolute;left:66px;top:8px;bottom:8px;width:2px;background:var(--leaf)}
+.ms li{display:grid;grid-template-columns:132px 1fr;gap:18px;align-items:start;padding:10px 0;position:relative}
+.ms .when{font-family:"Libre Franklin",sans-serif;font-weight:800;color:var(--green-dk);text-align:center;
+  background:#fff;position:relative;z-index:1;font-size:.95rem;line-height:1.5}
+.ms .what{background:var(--leaf-soft);border-radius:12px;padding:10px 16px;font-size:.95rem}
+.ms .what b{color:var(--green-dk)}
+@media (max-width:560px){.ms::before{left:44px}.ms li{grid-template-columns:88px 1fr;gap:10px}.ms .when{font-size:.82rem}}
+
+/* faq */
+.faq{border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;padding:20px 44px 20px 8px;position:relative;font-weight:700}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:1.6rem;font-weight:300;color:var(--muted)}
+.faq details[open] summary::after{content:"−"}
+.faq .ans{padding:0 8px 22px;font-size:.95rem}
+.faq .ans ul{margin:.3em 0;padding-left:1.2em}
+
+footer{margin-top:110px;background:var(--night);color:#ddd;padding:40px 0 34px;font-size:.88rem}
+footer .co{font-weight:700;color:#fff;font-size:1rem}
+footer a{color:#ddd}
+</style>
+</head>
+<body>
+
+<header>
+  <svg class="blob-logo" viewBox="0 0 250 100" aria-hidden="true"><path d="M0 0H250C238 46 182 58 118 64C64 70 26 82 0 100Z" fill="#b5784b"/></svg>
+  <div class="blob-logo" style="height:auto"><span>株式会社skyer</span></div>
+  <nav aria-label="ページ内"><a href="#view">見立て</a><a href="#why">なぜ今か</a><a href="#how">しくみ</a><a href="#solution">委託事業の様式（案）との関係</a><a href="#diff">先行との違い</a><a href="#record">ここまで</a><a href="#next">これから</a><a href="#faq">よくある質問</a></nav>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <p class="en">PROJECT</p>
+    <p class="jp">国の委託事業の点検様式（案）に合わせて、上空から先に見る。<br>直す順番を、毎年の台帳にする</p>
+    <span class="tag">新規事業・検証中（売上ゼロ）</span><span class="tag" style="margin-left:8px">様式の仕様は未入手・国や森林総研への照会はこれから</span>
+  </div>
+  <!-- 森・柵・イノシシ・ドローンの情景（オリジナル図版） -->
+  <svg class="scene" viewBox="0 0 1280 330" role="img" aria-label="森のそばの防護柵の上をドローンが飛び、柵の壊れた箇所に印がついている情景">
+    <ellipse cx="760" cy="215" rx="430" ry="105" fill="#cfe5d2"/>
+    <ellipse cx="1180" cy="240" rx="200" ry="80" fill="#e4efe2"/>
+    <!-- trees left -->
+    <g fill="#3f8f4a">
+      <path d="M120 300 L160 120 L200 300Z"/><path d="M130 260 L160 150 L190 260Z" fill="#4ca957"/>
+      <path d="M185 305 L232 90 L280 305Z"/><path d="M198 255 L232 130 L266 255Z" fill="#4ca957"/>
+      <path d="M60 305 L95 170 L130 305Z" fill="#2b7a3a"/>
+    </g>
+    <g fill="#7a5233"><rect x="156" y="296" width="8" height="14"/><rect x="228" y="300" width="8" height="12"/><rect x="91" y="300" width="8" height="10"/></g>
+    <!-- tree right -->
+    <rect x="1160" y="120" width="14" height="190" fill="#7a5233"/>
+    <g fill="#4ca957"><circle cx="1167" cy="110" r="52"/><circle cx="1128" cy="150" r="38"/><circle cx="1206" cy="152" r="40"/><circle cx="1168" cy="70" r="36" fill="#3f8f4a"/></g>
+    <!-- ground line -->
+    <path d="M0 310 H1280" stroke="#d6d6d0" stroke-width="2"/>
+    <!-- fence -->
+    <g stroke="#9a6825" stroke-width="5" stroke-linecap="round">
+      <line x1="430" y1="230" x2="430" y2="310"/><line x1="530" y1="230" x2="530" y2="310"/>
+      <line x1="630" y1="230" x2="630" y2="310"/><line x1="730" y1="230" x2="730" y2="310"/>
+      <line x1="830" y1="230" x2="830" y2="310"/>
+    </g>
+    <g stroke="#b5784b" stroke-width="2.5" fill="none">
+      <path d="M430 248 H830"/><path d="M430 270 H830"/><path d="M430 292 H830"/>
+      <!-- broken section -->
+      <path d="M630 248 L700 262" stroke="#e07a3c" stroke-dasharray="6 5"/>
+    </g>
+    <circle cx="668" cy="262" r="20" fill="none" stroke="#e07a3c" stroke-width="3"/>
+    <!-- boars -->
+    <g fill="#5b3a26">
+      <ellipse cx="350" cy="282" rx="44" ry="22"/><ellipse cx="392" cy="276" rx="18" ry="14"/>
+      <path d="M404 276 L420 282 L404 286Z"/><rect x="322" y="296" width="7" height="14"/><rect x="368" y="296" width="7" height="14"/>
+      <ellipse cx="275" cy="290" rx="34" ry="17"/><ellipse cx="306" cy="285" rx="14" ry="11"/>
+      <path d="M316 285 L328 290 L316 293Z"/><rect x="255" y="300" width="6" height="10"/><rect x="290" y="300" width="6" height="10"/>
+    </g>
+    <!-- drone -->
+    <g transform="translate(700 92)">
+      <path d="M-58 0 H58" stroke="#333" stroke-width="5" stroke-linecap="round"/>
+      <ellipse cx="-58" cy="-8" rx="26" ry="4" fill="#9a9a94"/><ellipse cx="58" cy="-8" rx="26" ry="4" fill="#9a9a94"/>
+      <rect x="-22" y="-10" width="44" height="22" rx="8" fill="#333"/>
+      <circle cx="0" cy="18" r="7" fill="#4ca957"/>
+      <path d="M-6 26 L-70 140 H70 L6 26Z" fill="#4ca957" opacity=".14"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <nav class="anchors" aria-label="目次">
+      <a href="#view">見立て</a><a href="#solution">委託事業の様式（案）との関係</a><a href="#diff">先行との違い</a><a href="#with">DeNAと</a><a href="#next">これから</a>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="lead-box">
+    <h2>守りの側を<br>測る</h2>
+    <p>鳥獣被害を防ぐ柵は、張った後の状態で効き目が決まります。</p>
+    <p>国の委託事業で、柵の点検記録の入力フォームがほぼ完成しました。</p>
+    <p>私たちはその様式に合わせて上空から一次点検し、壊れていそうな箇所を、現地へ行く前に同じ形式の地図に載せる計画です。</p>
+    <p>記録を森林組合・県・市町村をまたいで集め、直す順番を示す台帳を毎年回します。</p>
+    <div class="now">現在地：この事業は売上ゼロです。県の鳥獣害担当部署から「狩猟者向けのICT機器は使いこなせずに終わることが多い」と聞きましたが、柵の台帳にいくら払えるかはまだ聞けておらず、価格も決まっていません。上空で見つけた箇所がどれだけ当たるかも、まだ測っていません。<br>ドローンでの飛行と記録の運用は、既存事業（県の複数年契約）で回せています。</div>
+  </div>
+
+
+  <section id="view">
+    <div class="sec-title"><span class="en">OUR VIEW</span><h3>まだ合意されていない見立て</h3></div>
+    <div class="insight narrow">
+      <div class="view common"><div class="lbl">よく見かける見立て</div><h4>獣を見つけて、<br>追い払う</h4><p>ドローンやAIの鳥獣対策は、獣の検知や追い払い、出没の予測に集まっています。</p></div>
+      <div class="vs">VS</div>
+      <div class="view ours"><div class="lbl">私たちの見立て</div><h4>獣ではなく、<br>柵を見る</h4><p>被害の大きさは、獣の圧力と守りの弱さの掛け算です。私たちは守りの側、つまり柵の区間ごとの実際の状態を、毎年同じ様式で測ります。新しく張るより、張った柵を効かせる。</p></div>
+    </div>
+    <div class="evidence narrow">
+      <div class="ev"><div class="k">相関なし<small>柵の長さ × 被害の減り方</small></div><p>財務省の調査では、侵入防止柵の総延長と鳥獣被害の減少額に、明確な相関は見られませんでした（有効回答502）。財務省は柵の効果そのものは否定しておらず、正しく設置・管理されていれば侵入は防げるとしています。</p></div>
+      <div class="ev"><div class="k">85%<small>被害が出た農地33か所</small></div><p>同じ調査で、被害が出ている農地の85%に、柵の維持管理の不備が見られました。</p></div>
+      <div class="ev"><div class="k">慣れる<small>追い払い</small></div><p>森林総合研究所の手引きは、追い払いの道具は単純な使い方では効果が続く期間が短い、としています。</p></div>
+    </div>
+    <div class="unsure narrow" style="background:#f7ece2"><b style="color:#9a6825">私たちが作るもの：</b>特定の柵に絞った解析ツールではなく、<b style="color:#9a6825">柵の状態のデータを取る仕組み</b>です。上空の画像と、地上の修繕記録（写真・直した内容・位置）を同じ場所で結び付けて残します。点検を回すほど「上空でこう見えた所は、実際にはこの破損だった」という組み合わせが溜まり、破損を見分けるAIの学習データになり得ます（データの権利の合意が前提）。道路のガードレールや空港のフェンスでは画像から損傷を見つける技術が実用・研究されています。私たちは、草木に覆われた山の柵でこのデータを溜めることに絞り、将来は線路沿いや、道路から見えない法面側・林内側など、歩いて見回るしかない場所の柵へ広げられるかを確かめます（未検証）。海外では牧場の柵をドローンで点検する事例もあります。</div>
+    <div class="unsure narrow"><b>まだうまく説明できていないこと：</b>柵の状態を測る仕事が、どれだけの市場の大きさになるか。農地の市町村と林業の森林組合・県で足りるのか、ほかの柵まで広げる必要があるのか。ここは、これから1年の検証で確かめます。</div>
+    <p class="src narrow">出典：財務省「予算執行調査（令和6年6月）」<a href="https://www.mof.go.jp/policy/budget/topics/budget_execution_audit/fy2024/sy0606/19.pdf">資料</a>／森林総合研究所「ニホンザルの追い上げマニュアル」(2008)</p>
+  </section>
+
+  <section id="why">
+    <div class="sec-title"><span class="en">WHY NOW</span><h3>なぜ今か</h3></div>
+    <div class="why narrow">
+      <p class="quote">財務省は2024年の予算執行調査で、柵を整備した農地の現状を、市町村がほぼ把握できていないと指摘しました。</p>
+      <p>これを受けて、適切に設置・維持管理を行う市町村に限って、柵の整備費を交付する方針が示されました。交付金の配分には、令和9年度予算から反映される予定です。</p>
+      <div class="steps-mini"><span>2024年 指摘</span><i>›</i><span>維持管理を確認する方針</span><i>›</i><span>令和9年度予算から反映（予定）</span></div>
+      <p>交付金の実施要領のチェックシートにも、「定期的な見回りを行い、破損等を確認したら速やかに修繕する」という項目があります。</p>
+      <p>林業の側では、国の委託事業で、造林地のシカ柵の点検記録の入力フォームがほぼ完成しました（令和7年度報告書）。</p>
+      <p>柵の「状態」を記録して示す必要が、農地と林業の両方で生まれつつあります。</p>
+      <p class="src">出典：財務省「予算執行調査（令和6年6月）」<a href="https://www.mof.go.jp/policy/budget/topics/budget_execution_audit/fy2024/sy0606/19.pdf">資料</a>／同「反映状況」<a href="https://www.mof.go.jp/policy/budget/topics/budget_execution_audit/fy2024/hanei/19.pdf">資料</a>／農林水産省 鳥獣被害防止総合対策交付金 実施要領（令和8年4月7日）別紙2／林野庁「高度な森林鳥獣被害防除手法の標準化推進事業」令和7年度報告書（令和8年3月）</p>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="sec-title"><span class="en">HOW IT WORKS</span><h3>しくみ</h3></div>
+    <div class="flow">
+      <div class="card">
+        <svg viewBox="0 0 72 72" aria-hidden="true"><path d="M14 30H58" stroke="#2b7a3a" stroke-width="4" stroke-linecap="round"/><ellipse cx="14" cy="25" rx="10" ry="2.5" fill="#9a9a94"/><ellipse cx="58" cy="25" rx="10" ry="2.5" fill="#9a9a94"/><rect x="26" y="26" width="20" height="12" rx="4" fill="#2b7a3a"/><path d="M33 40 L18 64H54L39 40Z" fill="#4ca957" opacity=".25"/></svg>
+        <div class="no">STEP 1</div><h4>記録する</h4>
+        <p>年1〜2回と台風・大雪の後に、ドローンで柵の全区間を撮影します。壊れていそうな箇所と、点検した日時・区間を記録します。</p>
+      </div>
+      <div class="chev"></div>
+      <div class="card mid">
+        <svg viewBox="0 0 72 72" aria-hidden="true"><path d="M10 14 L28 8 L44 14 L62 8 V58 L44 64 L28 58 L10 64Z" fill="#fff" opacity=".95"/><path d="M28 8V58M44 14V64" stroke="#4ca957" stroke-width="2"/><circle cx="20" cy="30" r="5" fill="#e07a3c"/><circle cx="36" cy="44" r="5" fill="#e07a3c"/><circle cx="53" cy="26" r="5" fill="#e07a3c"/><text x="17" y="33" font-size="8" fill="#fff" font-weight="700">1</text><text x="33" y="47" font-size="8" fill="#fff" font-weight="700">2</text><text x="50" y="29" font-size="8" fill="#fff" font-weight="700">3</text></svg>
+        <div class="no">STEP 2</div><h4>地図に載せる</h4>
+        <p>壊れていそうな箇所を、その様式と同じ形式の地図に載せる計画です。作業者は印の所から確かめて直し、同じ様式で記録します。</p>
+      </div>
+      <div class="chev"></div>
+      <div class="card">
+        <svg viewBox="0 0 72 72" aria-hidden="true"><rect x="12" y="14" width="48" height="46" rx="5" fill="none" stroke="#2b7a3a" stroke-width="4"/><path d="M12 26H60" stroke="#2b7a3a" stroke-width="4"/><path d="M22 8V18M50 8V18" stroke="#2b7a3a" stroke-width="4" stroke-linecap="round"/><path d="M25 42 L33 50 L48 34" stroke="#4ca957" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="no">STEP 3</div><h4>毎年の台帳</h4>
+        <p>森林組合・県・市町村の記録を1つに集め、区間ごとの損壊と補修の頻度、かかった時間と資材を出します。年次の報告書にまとめ、次に張る柵の設計にも返します。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="solution">
+    <div class="sec-title"><span class="en">SOLUTION</span><h3>国の委託事業の点検様式（案）の前工程として設計（仕様の入手と利用の確認はこれから）</h3></div>
+    <div class="narrow">
+      <p class="lead-p">林野庁の委託事業で、森林総合研究所が造林地のシカ柵の点検・修繕の記録様式を作りました。無料の地図アプリ（QField）とQGISで、点ごとに位置と日時が自動で入ります。入力フォームはほぼ完成しています。私たちは、この様式を置き換えません。その前に、上空からの一次点検を足します。</p>
+      <div class="steps-mini"><span>ドローンで全区間を一次点検</span><i>›</i><span>壊れていそうな箇所を同じ形式の地図に載せる（仕様入手後）</span><i>›</i><span>作業者が印の所を確かめて直し、記録</span><i>›</i><span>記録を台帳に集める</span><i>›</i><span>年次の報告・次の設計へ</span></div>
+
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>様式（案）の項目</th><th>侵入の型</th><th>上空から分かる見込み（当社の見立て・未検証）</th></tr></thead>
+          <tbody>
+            <tr><th>高さ不十分（支柱の傾き・ロープ外れ）</th><td>飛び越え</td><td>中〜高</td></tr>
+            <tr><th>大規模破損（破損スパン数）</th><td>—</td><td>中〜高</td></tr>
+            <tr><th>ネット破れ</th><td>穴抜け</td><td>低〜中（解像度・植生しだい）</td></tr>
+            <tr><th>下部アンカー・下部ネット</th><td>潜り込み</td><td>低（地上で確かめる）</td></tr>
+            <tr><th>不足資材</th><td>—</td><td>中（破損スパン数から事前に見積もる）</td></tr>
+            <tr><th>点検した日時・区間</th><td>—</td><td>高（上空から点検した記録が残る）</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="margin-top:28px;font-weight:700">国の委託事業の報告書が挙げた「今後の課題」に、答える形で設計しています。</p>
+      <div class="evidence">
+        <div class="ev"><div class="k" style="font-size:1.05rem">データ共有<small>複数の事業体の間で</small></div><p>森林組合・県・市町村の記録を、1つの台帳に集めます。</p></div>
+        <div class="ev"><div class="k" style="font-size:1.05rem">頻度の把握<small>損壊と補修</small></div><p>区間ごとに、壊れた回数と直した回数を出します。</p></div>
+        <div class="ev"><div class="k" style="font-size:1.05rem">コスト比較<small>トータルコスト</small></div><p>補修にかかった時間と資材を、区間ごとに残します。</p></div>
+        <div class="ev"><div class="k" style="font-size:1.05rem">補助制度<small>との整合</small></div><p>年次の報告書にまとめ、「なぜそこを直したか」を説明できる資料にします。</p></div>
+      </div>
+
+      <div class="unsure"><b>正直に書くこと：</b><ul>
+        <li>手順書は「（案）」として林野庁に提出された段階で、本文は公開されておらず、私たちも入手していません。</li>
+        <li>令和8年度以降にこの事業が続くかは、確認できていません。</li>
+        <li>国と連携しているわけではありません。林野庁と森林総合研究所への照会は、これからです。</li>
+        <li>上空で見つけた箇所がどれだけ当たるかは未検証です。下部の固定やネットの裾の不具合は、地上で確かめる必要があります。</li>
+      </ul></div>
+      <p class="src">出典：林野庁「高度な森林鳥獣被害防除手法の標準化推進事業」令和6年度報告書 p.12-17 <a href="https://www.rinya.maff.go.jp/j/hogo/higai/tyouju/attach/pdf/250428_1-2.pdf">資料</a>／同 令和7年度報告書（令和8年3月）p.5-9。「上空から分かる見込み」は当社の見立てで、2027年3月までに1か所で実測します。</p>
+    </div>
+  </section>
+
+  <section id="diff">
+    <div class="sec-title"><span class="en">DIFFERENCE</span><h3>先行との違い</h3></div>
+    <div class="narrow">
+      <p class="lead-p">柵や獣害の記録を扱う先行は、いくつもあります。違いは「何で状態を知るか」と「何を出すか」です。</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>類型</th><th>何で状態を知るか</th><th>何を出すか</th></tr></thead>
+          <tbody>
+            <tr><th>出没を予測するサービス</th><td>獣の出没情報、地形・植生</td><td>どこに対策するか（獣の側）</td></tr>
+            <tr><th>集落への質問票による可視化</th><td>集落代表者の自己申告（集落単位）</td><td>被害と柵の重ね合わせ</td></tr>
+            <tr><th>設置時の台帳</th><td>補助金申請時の設置データ</td><td>設置場所・年度・設置者</td></tr>
+            <tr><th>電気柵の電圧通知</th><td>電気柵の電圧</td><td>電圧の異常の通知</td></tr>
+            <tr><th>作業記録アプリ</th><td>作業者のスマホ入力（写真・位置・時刻）</td><td>見回り・作業の記録</td></tr>
+            <tr class="ours"><th>skyer</th><td>区間ごとの実物の状態（上空からの一次点検＋地上の確認）を、国の委託事業の様式（案）に合わせて毎年同じ基準で</td><td>すでにある柵のどこから直すか（直す順番）と、事業体をまたぐ年次の台帳</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="unsure"><b>置き換えではなく、足し算です。</b>上空から見えない不具合（林内の柵・下部の掘り返し・電圧）があるため、地上の確認や電圧通知と組み合わせる前提です。出没を予測する仕組みとは、獣の側と守りの側で補い合える関係になり得ます。</div>
+      <p class="src">2026年10月時点で、当社が調べた範囲での比較です。</p>
+    </div>
+  </section>
+
+  <section id="who">
+    <div class="sec-title"><span class="en">CUSTOMER</span><h3>誰が・どの財布で買うか</h3></div>
+    <div class="rec narrow">
+      <div class="rec-item"><div class="lbl">造林地のシカ柵<br>（森林組合・県の林務）</div><p>財源の候補は森林環境譲与税です（柵の点検に使えるかは未確認）。使い道の例示に、鳥獣被害の区分があります。造林の補助で点検費が出るかは、まだ確認できていません。</p></div>
+      <div class="rec-item"><div class="lbl">農地の集落柵<br>（市町村）</div><p>点検・記録・地図化は、鳥獣被害防止総合対策交付金の推進事業（GISを活用した被害対策の可視化の支援、集落点検の促進など）の対象になり得ます。修繕は地元が担います。修繕費は原則として交付金の対象外です。</p></div>
+    </div>
+    <div class="who narrow" style="margin-top:20px">
+      <div class="stat"><div class="num">1,525<small>市町村</small></div><div class="cap">鳥獣被害防止計画を持つ市町村<br>（制度上の対象・農林水産省 2025年4月末）</div></div>
+      <div class="stat"><div class="num">約99<small>億円</small></div><div class="cap">鳥獣被害防止総合対策交付金の国費<br>（令和7年度当初）</div></div>
+    </div>
+    <div class="narrow">
+      <p>最初は、鳥取県内の造林地と、当社から日帰りで通える中国地方の市町村に絞ります。毎年の点検と台帳づくりの役務として納めます。価格はまだ決めていません。その先は、同じ台帳を鉄道の線路沿いの柵へ広げられるかを確かめます（未検証）。</p>
+      <p class="src">出典：<a href="https://www.maff.go.jp/j/g_biki/hojo/r7_hosei/250131_3.html">農林水産省</a>／鳥獣被害防止総合対策交付金 実施要領（令和8年4月7日）</p>
+    </div>
+  </section>
+
+  <section id="record">
+    <div class="sec-title"><span class="en">TRACK RECORD</span><h3>既存事業でやってきたこと</h3></div>
+    <div class="rec narrow">
+      <div class="rec-item"><div class="lbl">行政の予算に<br>載せた</div><p>鳥取県の鳥取砂丘ドローン巡視を2023年度から受託。県の課題を仕様に落とし込むところから関わり、2028年度までの複数年契約になりました。</p></div>
+      <div class="rec-item"><div class="lbl">試験発注を<br>予算化した</div><p>鳥取市の海洋漂着ごみ回収。令和7年度の試験発注が、令和8年度の当初予算になりました。</p></div>
+      <div class="rec-item"><div class="lbl">獣の出没を<br>記録した</div><p>兵庫県事業の実証で、夜間に暗視カメラ付きドローンでイノシシの群れ（約10頭）の移動を記録しました。2026年3月には鳥取市内のゴルフ場で夜間の生息調査を行い、イノシシ29頭とシカ1頭を確認しました。</p></div>
+    </div>
+    <p class="note narrow">柵の点検と台帳は、まだ実施していません。鳥獣の分野では、試験発注を翌年度の予算に載せる流れも、まだ通せていません。ここが次の検証です。</p>
+  </section>
+
+
+  <section id="with">
+    <div class="sec-title"><span class="en">WITH DELIGHT &amp; DeNA</span><h3>デライトとDeNAと一緒にやりたいこと</h3></div>
+    <div class="narrow">
+      <p class="lead-p">M-ShIPのLiving Systemsのテーマには、「地域での受託や実証を入口に、自然インフラを継続的に開発・保有・運営」する事業モデルが挙げられています。私たちは、県や市の受託を入口に、柵という自然と接するインフラの状態を持ち続ける側に回ろうとしています。</p>
+      <div class="rec">
+        <div class="rec-item"><div class="lbl">AI専門家による<br>技術支援</div><p>上空の画像と地上の修繕記録の組み合わせから、破損を見分けるモデルと、点検を回すほど精度が上がる学習の回し方を一緒に設計したい。社内に画像認識の人材はいません。</p></div>
+        <div class="rec-item"><div class="lbl">使われ続ける<br>形づくり</div><p>高齢の作業者が迷わず記録でき、自治体の担当者が予算の説明に使える画面にしたい。県の担当部署からも、ICT機器が使いこなせずに終わる例が多いと聞いています。</p></div>
+        <div class="rec-item"><div class="lbl">ファイナンス<br>設計</div><p>受託の売上から、データを持つ事業へ移る順番と、次のラウンドで示すべき数字を一緒に決めたい。11期目の会社の中で新規事業をどう立てるかも相談したい点です。</p></div>
+        <div class="rec-item"><div class="lbl">営業紹介・実証連携<br>と採用</div><p>鉄道・道路など、柵を持つ事業者への接点と、自治体との調整を代表以外で担う人の採用です。</p></div>
+      </div>
+    </div>
+  </section>
+  <section id="next">
+    <div class="sec-title"><span class="en">MILESTONES</span><h3>この先約1年で確かめること（うち約9か月がプログラム期間）</h3></div>
+    <ol class="ms narrow">
+      <li><div class="when">2026.12</div><div class="what">林野庁・森林総合研究所へ照会し、手順書（案）と入力フォームの仕様を入手する。森林組合・市町村への業務の聞き取り <b>3件</b></div></li>
+      <li><div class="when">2027.03</div><div class="what">鳥取の造林地 <b>1か所</b> で、上空の点検と地上の点検を同じ区間で行い、<b>当たり率</b>と<b>歩いた距離の差</b>を測る</div></li>
+      <li><div class="when">2027.05</div><div class="what">データの権利の条項を入れた契約書式で、森林組合または市町村と有償の試行契約 <b>1本</b></div></li>
+      <li><div class="when">2027.08</div><div class="what">共有台帳の試作（<b>2つ以上</b>の事業体の記録を集め、年次報告書のひな形を作る）</div></li>
+      <li><div class="when">2027.11</div><div class="what">翌年度の予算（森林環境譲与税または交付金）に計上の意思を示した相手 <b>1件</b></div></li>
+    </ol>
+    <p class="src narrow" style="margin-top:10px">いずれも仮の目標です。</p>
+  </section>
+
+  <section id="faq">
+    <div class="sec-title"><span class="en">FAQ</span><h3>よくある質問</h3></div>
+    <div class="faq narrow">
+      <details><summary>いま、どこまで進んでいますか？</summary><div class="ans">柵の点検と台帳は、売上ゼロです。公開資料の調査と聞き取りで課題を整理した段階で、柵の台帳への支払い意思はまだ聞けていません。ドローンで飛ばして記録する運用は、既存事業で回せています。森林組合・市町村への聞き取りは、2026年12月までに3件行います。</div></details>
+      <details><summary>国と一緒にやっているのですか？</summary><div class="ans">いいえ。国の委託事業の報告書（公開資料）を読み、その様式と課題に合わせて設計しています。林野庁と森林総合研究所への照会は、これからです。手順書は「（案）」の段階で、本文は公開されていません。</div></details>
+      <details><summary>上空から、柵の不具合は全部見えますか？</summary><div class="ans">見えません。下部の固定やネットの裾の不具合は、地上で確かめる必要があります。上空の一次点検は、地上の点検を置き換えるものではなく、歩く前に「どこから見るか」を絞るためのものです。どれだけ当たるかは、2027年3月までに1か所で実測します。</div></details>
+      <details><summary>修繕も請け負いますか？</summary><div class="ans">請け負いません。修繕は地元の森林組合・集落・業者が担います。私たちは、点検・記録・台帳づくりを担います。</div></details>
+      <details><summary>価格は決まっていますか？</summary><div class="ans">決まっていません。森林組合や市町村が予算を組んで買える水準かを、聞き取りで確かめるところからです。</div></details>
+      <details><summary>いま悩んでいることは？</summary><div class="ans"><ul>
+        <li>市場の天井。農地の交付金と林業の譲与税を合わせて、どこまで広がるかは確かめられていません。</li>
+        <li>価格を自分たちで決められていないこと。</li>
+        <li>台帳を作る開発者が社内にいないこと。</li>
+        <li>自治体との調整が代表に集中していること。</li></ul></div></details>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="co">株式会社skyer</div>
+    鳥取県・2016年設立　代表取締役 宇佐美孝太<br>
+    <a href="https://skyer.info/">skyer.info</a>
+  </div>
+</footer>
+</body>
+</html>
